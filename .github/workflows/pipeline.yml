@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     name: Test Application
-    runs-on: ubuntu-latest # Run the test job on a GitHub-hosted runner
+    runs-on: self-hosted # ubuntu-latest # Run the test job on a GitHub-hosted runner
 
     steps:
       - name: Checkout repository
@@ -35,7 +35,7 @@ jobs:
   deploy:
     name: Deploy to Self-Hosted Runner
     needs: test # This job depends on the 'test' job succeeding
-    runs-on: [self-hosted, nodejs-runner] # Use your self-hosted runner with a specific label
+    runs-on: self-hosted #[self-hosted, nodejs-runner] # Use your self-hosted runner with a specific label
 
     steps:
       - name: Download test results artifact
@@ -58,7 +58,7 @@ jobs:
       - name: Install dependencies for deployment
         run: npm install # Install dependencies on the self-hosted runner
 
-      - name: Stop existing application (if running)
+      - name: Stop existing application
         # This step assumes you are using PM2 to manage your Node.js application.
         # If not using PM2, you might need a different command to stop the process.
         # For Windows, use 'taskkill /IM node.exe /F' if not using PM2.
@@ -74,17 +74,10 @@ jobs:
           fi
         shell: bash # Ensure bash is used for conditional logic
 
-      - name: Start Node.js application with PM2
-        # Install PM2 globally if not already installed on the self-hosted runner
-        # npm install -g pm2
+      - name: Start Node.js application with PM2       
         run: |
           npm install -g pm2 # Install PM2 globally if not already installed
           pm2 start server.js --name "node-app" # Start your application using PM2
           pm2 save # Save PM2 process list to restart on boot
         
-        #env:
-          # Define any environment variables your application needs here
-          # For example: NODE_ENV: production
-          # PORT: 3000
-          # Ensure these are configured on your self-hosted runner or passed via environment variables
-          # This example assumes the app listens on a default port or 3000
+       
