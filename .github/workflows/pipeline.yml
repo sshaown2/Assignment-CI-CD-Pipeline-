@@ -62,7 +62,7 @@ jobs:
         shell: powershell      
         run: |
           #npm install -g pm2 # Install PM2 globally if not already installed
-          pm2 start server.js --name "node-app" # Start the application using PM2
+          pm2 start src/server.js # Start the application using PM2
           pm2 save # Save PM2 process list to restart on boot
         
        
