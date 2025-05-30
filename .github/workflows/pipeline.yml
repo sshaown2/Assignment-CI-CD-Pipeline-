@@ -59,25 +59,23 @@ jobs:
         
         - name: Stop existing application  
         run: |
-        if (Get-Command pm2 -ErrorAction SilentlyContinue) {
-      try {
-        pm2 stop all
-        pm2 delete all
-      } catch {
-        Write-Host "PM2 stop/delete failed: $_"
-      }
-    } else {
-      Write-Host "PM2 not found. Manual stop/start might be needed."
-      # Optionally stop node process manually on Windows:
-      try {
-        Stop-Process -Name "node" -Force -ErrorAction SilentlyContinue
-      } catch {
-        Write-Host "Node process stop failed: $_"
-      }
-    }
-    shell: powershell
-
-
+            if (Get-Command pm2 -ErrorAction SilentlyContinue) {
+            try {
+            pm2 stop all
+            pm2 delete all
+            } catch {
+                Write-Host "PM2 stop/delete failed: $_"
+            }
+            } else {
+             Write-Host "PM2 not found. Manual stop/start might be needed."
+              # Optionally stop node process manually on Windows:
+            try {
+             Stop-Process -Name "node" -Force -ErrorAction SilentlyContinue
+            } catch {
+             Write-Host "Node process stop failed: $_"
+            }
+            }         
+            shell: powershell
 
       - name: Start Node.js application with PM2       
         run: |
