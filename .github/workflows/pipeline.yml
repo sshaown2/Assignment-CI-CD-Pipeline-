@@ -59,13 +59,14 @@ jobs:
 
       - name: Stop existing application
         run: |
-          if (Get-Command pm2 -ErrorAction SilentlyContinue) {
-      pm2 stop all
-      pm2 delete all
-    } else {
-      Write-Host "PM2 not found. Manual stop/start might be needed."
-      # Stop logic for Windows
-    }
+          if command -v pm2 &> /dev/null; then
+            pm2 stop all || true # Stop all PM2 processes, '|| true' prevents failure if no processes are running
+            pm2 delete all || true # Delete all PM2 processes
+          else
+            echo "PM2 not found. Manual stop/start might be needed."
+            # For Linux: pkill node || true
+            # For Windows: taskkill /IM node.exe /F || true
+          fi
         shell: pwsh # Ensure bash is used for conditional logic
              
       - name: Start Node.js application with PM2       
