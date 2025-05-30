@@ -58,24 +58,27 @@ jobs:
       #  run: npm install # Install dependencies on the self-hosted runner
         
       - name: Stop existing application
-        shell: powershell
-        run: |
-          if (Get-Command pm2 -ErrorAction SilentlyContinue) {
-            try {
-              pm2 stop all
-              pm2 delete all
-            } catch {
-              Write-Host "PM2 stop/delete failed: $_"
-            }
-          } else {
-            Write-Host "PM2 not found. Manual stop/start might be needed."
-            try {
-              Stop-Process -Name "node" -Force -ErrorAction SilentlyContinue
-            } catch {
-              Write-Host "Node process stop failed: $_"
-            }
-          }
-
+  shell: powershell
+  run: |
+    if (Get-Command pm2 -ErrorAction SilentlyContinue) {
+      try {
+        pm2 stop all -f
+      } catch {
+        Write-Host "Warning: no PM2 processes to stop or error occurred."
+      }
+      try {
+        pm2 delete all -f
+      } catch {
+        Write-Host "Warning: no PM2 processes to delete or error occurred."
+      }
+    } else {
+      Write-Host "PM2 not found. Trying to kill node processes manually."
+      try {
+        Stop-Process -Name "node" -Force -ErrorAction SilentlyContinue
+      } catch {
+        Write-Host "No node processes found or error occurred."
+      }
+    }
 
       - name: Start Node.js application with PM2       
         run: |
