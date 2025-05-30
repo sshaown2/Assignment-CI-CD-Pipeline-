@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: '20' # Specify the Node.js version to use (updated to 20)
 
-      - name: Install dependencies
-        run: npm install # Install Node.js project dependencies
+      #- name: Install dependencies
+      #  run: npm install # Install Node.js project dependencies
 
       - name: Run tests and capture results
         # The 'test' script in package.json will create 'test-results.txt'
@@ -55,14 +55,10 @@ jobs:
         with:
           node-version: '20' # Ensure Node.js is set up on the runner (updated to 20)
 
-      - name: Install dependencies for deployment
-        run: npm install # Install dependencies on the self-hosted runner
+      #- name: Install dependencies for deployment
+      #  run: npm install # Install dependencies on the self-hosted runner
 
       - name: Stop existing application
-        # This step assumes you are using PM2 to manage your Node.js application.
-        # If not using PM2, you might need a different command to stop the process.
-        # For Windows, use 'taskkill /IM node.exe /F' if not using PM2.
-        # For Linux, use 'pkill node' if not using PM2.
         run: |
           if command -v pm2 &> /dev/null; then
             pm2 stop all || true # Stop all PM2 processes, '|| true' prevents failure if no processes are running
@@ -76,8 +72,8 @@ jobs:
 
       - name: Start Node.js application with PM2       
         run: |
-          npm install -g pm2 # Install PM2 globally if not already installed
-          pm2 start server.js --name "node-app" # Start your application using PM2
+          #npm install -g pm2 # Install PM2 globally if not already installed
+          pm2 start server.js --name "node-app" # Start the application using PM2
           pm2 save # Save PM2 process list to restart on boot
         
        
