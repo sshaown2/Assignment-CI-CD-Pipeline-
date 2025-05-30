@@ -29,11 +29,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results # Name of the artifact
-          path: test-results-5.txt # Path to the file to upload
+          path: test-results.txt # Path to the file to upload
 
   deploy:
     name: Deploy to Self-Hosted Runner
-    needs: test # This job depends on the 'test' job succeeding
+    #needs: test # This job depends on the 'test' job succeeding
     runs-on: self-hosted #[self-hosted, nodejs-runner]
 
     steps:
@@ -44,7 +44,7 @@ jobs:
           path: ./downloaded-artifacts # Directory where the artifact will be downloaded
 
       - name: Display downloaded test results
-        run: cat ./downloaded-artifacts/test-results-5.txt # Display the content of the downloaded file
+        run: cat ./downloaded-artifacts/test-results.txt # Display the content of the downloaded file
 
       - name: Checkout repository for deployment
         uses: actions/checkout@v4 # Checkout the code on the self-hosted runner

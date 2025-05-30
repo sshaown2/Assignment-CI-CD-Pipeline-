@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Running dummy tests...\" && echo \"All tests passed!\" > test-results-5.txt"
+    "test": "echo \"Running dummy tests...\" && echo \"All tests passed!\" > test-results.txt"
   },
   "keywords": [],
   "author": "",
