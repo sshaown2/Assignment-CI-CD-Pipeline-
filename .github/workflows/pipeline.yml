@@ -8,67 +8,70 @@ on:
 jobs:
   test:
     name: Test Application
-    runs-on: self-hosted # Ensure your Windows self-hosted runner is online and labeled "self-hosted"
+    runs-on: self-hosted # ubuntu-latest # Run the test job on a GitHub-hosted runner
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Action to checkout your repository code
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20' # Specify the Node.js version to use (updated to 20)
+
+      #- name: Install dependencies
+      #  run: npm install # Install Node.js project dependencies
 
       - name: Run tests and capture results
-        run: |
-          npm install
-          npm test > test-result.txt || echo "Tests failed"
-        shell: pwsh # Use pwsh for Windows shell
+        run: npm test
 
       - name: Upload test results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: test-result
-          path: test-result.txt
+          name: test-result # Name of the artifact
+          path: test-result.txt # Path to the file to upload
 
   deploy:
     name: Deploy to Self-Hosted Runner
-    needs: test
-    runs-on: self-hosted
+    needs: test # This job depends on the 'test' job succeeding
+    runs-on: self-hosted #[self-hosted, nodejs-runner]
 
     steps:
       - name: Download test results artifact
         uses: actions/download-artifact@v4
         with:
-          name: test-result
-          path: downloaded-artifacts
+          name: test-result # Name of the artifact to download
+          path: ./downloaded-artifacts # Directory where the artifact will be downloaded
 
       - name: Display downloaded test results
-        run: type downloaded-artifacts/test-result.txt # Use `type` instead of `cat` on Windows
-        shell: pwsh
+        run: cat ./downloaded-artifacts/test-result.txt # Display the content of the downloaded file
 
       - name: Checkout repository for deployment
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Checkout the code on the self-hosted runner
 
       - name: Set up Node.js on self-hosted runner
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20' # Ensure Node.js is set up on the runner (updated to 20)
+
+      #- name: Install dependencies for deployment
+      #  run: npm install # Install dependencies on the self-hosted runner
 
       - name: Stop existing application
         run: |
           if (Get-Command pm2 -ErrorAction SilentlyContinue) {
-            pm2 stop all
-            pm2 delete all
-          } else {
-            Write-Host "PM2 not found. Manual stop/start might be needed."
-            taskkill /IM node.exe /F
-          }
-        shell: pwsh # Correct shell for Windows PowerShell Core
-
-      - name: Start Node.js application with PM2
+      pm2 stop all
+      pm2 delete all
+    } else {
+      Write-Host "PM2 not found. Manual stop/start might be needed."
+      # Stop logic for Windows
+    }
+        shell: pwsh # Ensure bash is used for conditional logic
+             
+      - name: Start Node.js application with PM2       
         run: |
-          # npm install -g pm2 # Uncomment if PM2 is not installed globally
-          pm2 start server.js --name "node-app"
-          pm2 save
-        shell: pwsh
+          #npm install -g pm2 # Install PM2 globally if not already installed
+          pm2 start server.js --name "node-app" # Start the application using PM2
+          pm2 save # Save PM2 process list to restart on boot
+        
+       
