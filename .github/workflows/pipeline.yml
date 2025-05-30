@@ -67,7 +67,9 @@ jobs:
             # For Linux: pkill node || true
             # For Windows: taskkill /IM node.exe /F || true
           fi
-        shell: pwsh # Ensure bash is used for conditional logic
+        #shell: pwsh # Ensure bash is used for conditional logic
+        shell: powershell
+
 
       - name: Start Node.js application with PM2       
         run: |
