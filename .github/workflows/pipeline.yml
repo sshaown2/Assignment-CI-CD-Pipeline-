@@ -58,7 +58,8 @@ jobs:
       #  run: npm install # Install dependencies on the self-hosted runner
         
       
-      - name: Start Node.js application with PM2       
+      - name: Start Node.js application with PM2   
+        shell: powershell      
         run: |
           #npm install -g pm2 # Install PM2 globally if not already installed
           pm2 start server.js --name "node-app" # Start the application using PM2
